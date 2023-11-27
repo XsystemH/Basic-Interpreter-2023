@@ -10,15 +10,13 @@
 
 #include "program.hpp"
 
-
-
 Program::Program() = default;
 
 Program::~Program() = default;
 
 void Program::clear() {
-    // Replace this stub with your own code
-    //todo
+    // My own code
+    lines.clear();
 }
 
 void Program::addSourceLine(int lineNumber, const std::string &line) {

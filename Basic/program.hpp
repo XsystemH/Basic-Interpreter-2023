@@ -8,14 +8,28 @@
 #ifndef _program_h
 #define _program_h
 
+#include <map>
 #include <string>
 #include <vector>
 #include <set>
 #include <unordered_map>
-// #include "statement.hpp"
+#include "exp.hpp"
+#include "statement.hpp"
 
 
 class Statement;
+
+enum functions {REM, LET, PRINT, INPUT, END, GOTO, IF} ;
+
+struct code {
+    int linenumber;
+    std::string origin;
+    int function;
+    std::string ver1, ver2;
+    Expression *exp1 = nullptr, *exp2 = nullptr;
+    std::string ope;
+    std::string rem;
+};
 
 /*
  * This class stores the lines in a BASIC program.  Each line
@@ -33,6 +47,9 @@ class Statement;
 class Program {
 
 public:
+
+    std::map<int, std::string> lines;
+    std::map<int, code> functions;
 
 /*
  * Constructor: Program
