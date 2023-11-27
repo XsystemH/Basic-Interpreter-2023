@@ -27,7 +27,7 @@ struct code {
     int function;
     std::string ver1, ver2;
     Expression *exp1 = nullptr, *exp2 = nullptr;
-    std::string ope;
+    std::string str;
     std::string rem;
 };
 

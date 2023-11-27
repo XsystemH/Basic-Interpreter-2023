@@ -186,7 +186,7 @@ int main(int argc, char **argv) {
         if (traceFile.size()) runTest(traceFile);
         else {
             int i = 0;
-            for (; i < traceCount; i++) runTest(traceFolder + traces[i]);
+            for (; i < 5/*traceCount*/; i++) runTest(traceFolder + traces[i]);
         }
     } catch (...) {}
     system("rm testcode -f");

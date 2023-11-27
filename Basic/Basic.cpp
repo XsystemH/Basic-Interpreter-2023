@@ -60,14 +60,14 @@ void processLine(std::string line, Program &program, EvalState &state) {
     scanner.setInput(line);
 
     // void (*grammar[8]) () = {NULL, G_REM, G_LET, G_PRINT, G_INPUT, G_END, G_GOTO, G_IF};
-    bool withnumber = false;
+    /*bool withnumber = false;
     int linenum;
     code newline;
     if (scanner.hasMoreTokens()) {
         std::string token = scanner.nextToken();
         if (scanner.TokenScanner::getTokenType(token) == NUMBER) {
             linenum = stringToInteger(token);
-            
+            withnumber = true;
             //检查数字是否已经存在 
             //Exist: 1.后为空 line.clear
             //       2.否, 非法
@@ -102,14 +102,39 @@ void processLine(std::string line, Program &program, EvalState &state) {
             newline.ver1 = scanner.nextToken();
             token = scanner.nextToken(); // 读掉“=”
             newline.exp1 = parseExp(scanner);
-            int val = newline.exp1->Expression::eval(state);
-            state.EvalState::setValue(newline.ver1, val);
+            // ExpressionType typ = newline.exp1->getType();
+            int val = newline.exp1->eval(state);
+            if (!withnumber) state.EvalState::setValue(newline.ver1, val);
+            else {
+                newline.linenumber = linenum;
+                program.lines[linenum] = line;
+                program.functions[linenum] = newline;
+            }
         }
         else if (token == "PRINT") {
-            //
+            newline.function = PRINT;
+            // token = scanner.nextToken();
+            // bool isstr = false;
+            int tempval;
+            // scanner.scanNumbers();
+            // std::cout << "scanNumbers!\n";
+            newline.exp1 = parseExp(scanner);
+            // std::cout << "Getexp!\n";
+            tempval = newline.exp1->eval(state);
+            // std::cout << "Getval!\n";
+            // std::cout << tempval << std::endl;
+            if (!withnumber) {
+                // TODO
+                std::cout << tempval << std::endl;
+            }
+            else {
+                newline.linenumber = linenum;
+                program.lines[linenum] = line;
+                program.functions[linenum] = newline;
+            }
         }
         else if (token == "INPUT") {
-            //
+            newline.function = INPUT;
         }
         else if (token == "END") {
             if (!withnumber) {
@@ -131,6 +156,54 @@ void processLine(std::string line, Program &program, EvalState &state) {
                 return;
             }
             //
+        }
+
+        // controllers
+        if (withnumber) { // command with number leads to error
+            //TODO error message
+            return;
+        }
+        if (scanner.hasMoreTokens()) {
+            //
+            return;
+        }
+    }*/
+    std::string token = scanner.nextToken();
+    if (scanner.getTokenType(token) == NUMBER) {
+        int linenumber = stringToInteger(token);
+        if (scanner.hasMoreTokens()) {
+            int pos = scanner.getPosition();
+            // 去重？
+            program.addSourceLine(linenumber, line.substr(pos));
+            // 删去行号，将后面的语句交给解读部分
+        }
+        else {
+            program.removeSourceLine(linenumber);
+        }
+    }
+    else if (scanner.getTokenType(token) == WORD) { 
+        // LET PRINRT INPUT
+        // RUN LIST CLEAR QUIT HELP
+        if (token == "LET") {
+            
+        }
+        else if (token == "PRINT") {
+
+        }
+        else if (token == "INPUT") {
+            
+        }
+        else if (token == "RUN") {
+
+        }
+        else if (token == "LIST") {
+
+        }
+        else if (token == "CLEAR") {
+
+        }
+        else if (token == "HELP") {
+            std::cout << "I need help either!!!\n";
         }
     }
 }
