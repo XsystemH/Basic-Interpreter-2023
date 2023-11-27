@@ -19,9 +19,10 @@
 
 class Statement;
 
-enum functions {REM, LET, PRINT, INPUT, END, GOTO, IF} ;
+// enum functions {REM, LET, PRINT, INPUT, END, GOTO, IF} ;
+// WRONG!!!!!!
 
-struct code {
+/*struct code {
     int linenumber;
     std::string origin;
     int function;
@@ -29,7 +30,8 @@ struct code {
     Expression *exp1 = nullptr, *exp2 = nullptr;
     std::string str;
     std::string rem;
-};
+};*/ 
+// I shouldn't do that (@_@)
 
 /*
  * This class stores the lines in a BASIC program.  Each line
@@ -47,9 +49,6 @@ struct code {
 class Program {
 
 public:
-
-    std::map<int, std::string> lines;
-    std::map<int, code> functions;
 
 /*
  * Constructor: Program
@@ -164,6 +163,7 @@ private:
 
     // Fill this in with whatever types and instance variables you need
     //todo
+        
 };
 
 #endif
