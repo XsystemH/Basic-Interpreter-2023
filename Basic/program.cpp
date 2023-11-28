@@ -9,51 +9,76 @@
  */
 
 #include "program.hpp"
+#include <string>
+#include <utility>
 
 Program::Program() = default;
 
 Program::~Program() = default;
 
 void Program::clear() {
-    // My own code
-    lines.clear();
+    List.clear();
+    Func.clear();
 }
 
 void Program::addSourceLine(int lineNumber, const std::string &line) {
-    // Replace this stub with your own code
-    //todo
+    // They have line numbers: REM LET PRINT INPUT END GOTO IF
+    if (List.count(lineNumber) != 0) {
+        //error
+    }
+    List.insert(std::make_pair(lineNumber, line));
+    // Statement addfunc(line); ???
 }
 
 void Program::removeSourceLine(int lineNumber) {
-    // Replace this stub with your own code
-    //todo
+    List.erase(lineNumber);
+    Func.erase(lineNumber);
 }
 
 std::string Program::getSourceLine(int lineNumber) {
-    // Replace this stub with your own code
-    //todo
+    if (List.count(lineNumber) == 0) {
+        return std::string("");
+    }
+    return List[lineNumber];
 }
 
 void Program::setParsedStatement(int lineNumber, Statement *stmt) {
-    // Replace this stub with your own code
-    //todo
+    if (List.count(lineNumber) == 0) {
+        throw error;
+        return;
+    }
+    if (Func.count(lineNumber)) {
+        Func.erase(lineNumber);
+    }
+    Func[lineNumber] = stmt;
 }
 
 //void Program::removeSourceLine(int lineNumber) {
 
 Statement *Program::getParsedStatement(int lineNumber) {
-   // Replace this stub with your own code
-   //todo
+//    Statement *s;
+//    setParsedStatement(lineNumber, s);
+//    return s;
+    if (Func.count(lineNumber) == 0) {
+        return NULL;
+    }
+    return Func[lineNumber];
 }
 
 int Program::getFirstLineNumber() {
-    // Replace this stub with your own code
-    //todo
+    if (List.empty()) {
+        return -1;
+    }
+    return List.begin()->first;
 }
 
 int Program::getNextLineNumber(int lineNumber) {
-    // Replace this stub with your own code
-    //todo
+    auto it = List.find(lineNumber);
+    if (it != List.end()) {
+        it++;
+        return it->first;
+    }
+    return -1;
 }
 
 //more func to add

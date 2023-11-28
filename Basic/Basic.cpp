@@ -15,6 +15,7 @@
 #include "Utils/error.hpp"
 #include "Utils/tokenScanner.hpp"
 #include "Utils/strlib.hpp"
+#include "statement.hpp"
 
 
 /* Function prototypes */
@@ -185,16 +186,32 @@ void processLine(std::string line, Program &program, EvalState &state) {
         // LET PRINRT INPUT
         // RUN LIST CLEAR QUIT HELP
         if (token == "LET") {
-            
+            Expression *exp = parseExp(scanner);
+            LET temp(*exp);
+            temp.execute(state, program);
         }
         else if (token == "PRINT") {
-
+            // std::cout << "1\n";
+            Expression *exp = parseExp(scanner);
+            PRINT temp(state, *exp);
+            temp.execute(state, program);
+            delete exp;
         }
         else if (token == "INPUT") {
-            
+            std::string var = scanner.nextToken();
+            std::string temp;
+            getline(std::cin, temp);
+            Expression *exp = parseExp(scanner);
+            state.setValue(var, exp->eval(state));
         }
         else if (token == "RUN") {
-
+            int line = program.getFirstLineNumber();
+            Statement *tps = nullptr;
+            while (line != -1) {
+                tps = program.getParsedStatement(line);
+                tps->execute(state, program);
+                line = program.getNextLineNumber(line);
+            }
         }
         else if (token == "LIST") {
 

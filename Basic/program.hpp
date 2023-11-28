@@ -163,7 +163,8 @@ private:
 
     // Fill this in with whatever types and instance variables you need
     //todo
-        
+    std::map<int, std::string> List;
+    std::map<int, Statement*>  Func;
 };
 
 #endif

@@ -85,4 +85,45 @@ public:
  * specify its own destructor method to free that memory.
  */
 
+class REM : Statement {
+
+private:
+
+    std::string *note;
+    
+public:
+
+    REM(std::string &);
+    ~REM();
+    void execute(EvalState &, Program &);
+};
+
+class LET : Statement {
+    
+private:
+
+    Expression *exp = nullptr;
+
+public:
+
+    LET(Expression &);
+    ~LET();
+    void execute(EvalState &, Program &);
+
+};
+
+class PRINT : Statement {
+
+private:
+
+    int val;
+
+public:
+
+    PRINT(EvalState &, Expression &);
+    ~PRINT();
+    void execute(EvalState &, Program &);
+
+};
+
 #endif
