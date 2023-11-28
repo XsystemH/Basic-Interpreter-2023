@@ -24,7 +24,8 @@ void Program::clear() {
 void Program::addSourceLine(int lineNumber, const std::string &line) {
     // They have line numbers: REM LET PRINT INPUT END GOTO IF
     if (List.count(lineNumber) != 0) {
-        //error
+        // repalce
+        List.erase(lineNumber);
     }
     List.insert(std::make_pair(lineNumber, line));
     // Statement addfunc(line); ???
@@ -76,7 +77,8 @@ int Program::getNextLineNumber(int lineNumber) {
     auto it = List.find(lineNumber);
     if (it != List.end()) {
         it++;
-        return it->first;
+        if (it != List.end()) return it->first;
+        else return -1;
     }
     return -1;
 }

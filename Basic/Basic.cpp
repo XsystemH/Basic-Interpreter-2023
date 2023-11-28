@@ -174,9 +174,10 @@ void processLine(std::string line, Program &program, EvalState &state) {
         int linenumber = stringToInteger(token);
         if (scanner.hasMoreTokens()) {
             int pos = scanner.getPosition();
-            // 去重？
+            // // 删去行号，将后面的语句交给储存部分
             program.addSourceLine(linenumber, line.substr(pos));
-            // 删去行号，将后面的语句交给解读部分
+            // Statement *temp = program.ParseStatement(scanner);
+            // program.setParsedStatement(linenumber, temp);
         }
         else {
             program.removeSourceLine(linenumber);
@@ -200,9 +201,19 @@ void processLine(std::string line, Program &program, EvalState &state) {
         else if (token == "INPUT") {
             std::string var = scanner.nextToken();
             std::string temp;
-            getline(std::cin, temp);
-            Expression *exp = parseExp(scanner);
-            state.setValue(var, exp->eval(state));
+            while (1) {
+                try {
+                    std::cout << " ? ";
+                    getline(std::cin, temp);
+                    // std::cout << temp << "\n";
+                    int val = stringToInteger(temp);
+                    state.setValue(var, val);
+                } catch(ErrorException &ex) {
+                    std::cout << "INVALID NUMBER\n";
+                    continue;
+                }
+                break;
+            }
         }
         else if (token == "RUN") {
             int line = program.getFirstLineNumber();
@@ -214,10 +225,20 @@ void processLine(std::string line, Program &program, EvalState &state) {
             }
         }
         else if (token == "LIST") {
-
+            int line = program.getFirstLineNumber();
+            std::string tps;
+            while (line != -1) {
+                tps = program.getSourceLine(line);
+                std::cout << line << " " << tps << "\n";
+                line = program.getNextLineNumber(line);
+            }
         }
         else if (token == "CLEAR") {
-
+            program.clear();
+            state.Clear();
+        }
+        else if (token == "QUIT") {
+            exit(0);
         }
         else if (token == "HELP") {
             std::cout << "I need help either!!!\n";

@@ -13,6 +13,7 @@
 #include <vector>
 #include <set>
 #include <unordered_map>
+#include "Utils/tokenScanner.hpp"
 #include "exp.hpp"
 #include "statement.hpp"
 
@@ -156,8 +157,7 @@ public:
 
     int getNextLineNumber(int lineNumber);
 
-    //more func to add
-    //todo
+    Statement *ParseStatement(TokenScanner &scanner);
 
 private:
 

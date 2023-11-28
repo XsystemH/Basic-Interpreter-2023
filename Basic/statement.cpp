@@ -8,8 +8,10 @@
  */
 
 #include "statement.hpp"
+#include "Utils/error.hpp"
 #include "evalstate.hpp"
 #include "exp.hpp"
+#include <iostream>
 #include <string>
 
 
@@ -42,11 +44,18 @@ void LET::execute(EvalState &state, Program &program) {
 }
 
 PRINT::PRINT(EvalState &state, Expression &exp) {
-    this->val = exp.eval(state);
+    try {
+        this->val = new int(exp.eval(state));
+    }catch (ErrorException &ex) {
+        std::cout << ex.getMessage() << "\n";
+        legal = false;
+        delete val;
+    }
 }
 PRINT::~PRINT() {
     // int 要删吗？
+    delete val;
 }
 void PRINT::execute(EvalState &state, Program &program) {
-    std::cout << val << "\n";
+    if (legal) std::cout << *val << "\n";
 }

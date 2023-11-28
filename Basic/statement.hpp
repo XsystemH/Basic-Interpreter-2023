@@ -116,7 +116,8 @@ class PRINT : Statement {
 
 private:
 
-    int val;
+    int *val = nullptr;
+    bool legal = true;
 
 public:
 
