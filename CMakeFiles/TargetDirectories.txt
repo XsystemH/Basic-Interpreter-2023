@@ -1,3 +1,0 @@
-/home/xhsystem/Code/Basic-Interpreter-2023/CMakeFiles/code.dir
-/home/xhsystem/Code/Basic-Interpreter-2023/CMakeFiles/edit_cache.dir
-/home/xhsystem/Code/Basic-Interpreter-2023/CMakeFiles/rebuild_cache.dir
