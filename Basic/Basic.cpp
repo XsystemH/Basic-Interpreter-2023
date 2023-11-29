@@ -176,8 +176,8 @@ void processLine(std::string line, Program &program, EvalState &state) {
             int pos = scanner.getPosition();
             // // 删去行号，将后面的语句交给储存部分
             program.addSourceLine(linenumber, line.substr(pos));
-            // Statement *temp = program.ParseStatement(scanner);
-            // program.setParsedStatement(linenumber, temp);
+            Statement *temp = program.ParseStatement(state, scanner);
+            program.setParsedStatement(linenumber, temp);
         }
         else {
             program.removeSourceLine(linenumber);
@@ -215,6 +215,7 @@ void processLine(std::string line, Program &program, EvalState &state) {
                 break;
             }
         }
+        // controllers
         else if (token == "RUN") {
             int line = program.getFirstLineNumber();
             Statement *tps = nullptr;

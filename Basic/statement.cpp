@@ -23,12 +23,8 @@ Statement::Statement() = default;
 
 Statement::~Statement() = default;
 
-REM::REM(std::string &s) {
-  this->note = &s;
-}
-REM::~REM() {
-  delete note;
-}
+REM::REM() = default;
+REM::~REM() = default;
 void REM::execute(EvalState &state, Program &program) {
   return;
 }
@@ -58,4 +54,50 @@ PRINT::~PRINT() {
 }
 void PRINT::execute(EvalState &state, Program &program) {
     if (legal) std::cout << *val << "\n";
+}
+
+INPUT::INPUT(std::string &v) {
+  this->var = v;
+}
+INPUT::~INPUT() = default;
+void INPUT::execute(EvalState &state, Program &program) {
+    std::string temp;
+    while (1) {
+        try {
+            std::cout << " ? ";
+            getline(std::cin, temp);
+            // std::cout << temp << "\n";
+            int val = stringToInteger(temp);
+            state.setValue(var, val);
+        } catch(ErrorException &ex) {
+            std::cout << "INVALID NUMBER\n";
+            continue;
+        }
+        break;
+    }
+}
+
+END::END() = default;
+END::~END() = default;
+void END::execute(EvalState &state, Program &program) {
+    program.linejump = -1;
+}
+
+GOTO::GOTO(int &num) {
+    linenumber = num;
+}
+GOTO::~GOTO() = default;
+void GOTO::execute(EvalState &state, Program &program) {
+    program.linejump = linenumber;
+}
+
+IF::IF(Expression *e, int &n) {
+    this->exp = e;
+    this->linenumber = n;
+}
+IF::~IF() {
+    delete exp;
+}
+void IF::execute(EvalState &state, Program &program) {
+    return;
 }

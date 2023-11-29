@@ -9,6 +9,12 @@
  */
 
 #include "program.hpp"
+#include "Utils/strlib.hpp"
+#include "evalstate.hpp"
+#include "exp.hpp"
+#include "parser.hpp"
+#include "statement.hpp"
+#include <cstddef>
 #include <string>
 #include <utility>
 
@@ -44,23 +50,19 @@ std::string Program::getSourceLine(int lineNumber) {
 }
 
 void Program::setParsedStatement(int lineNumber, Statement *stmt) {
-    if (List.count(lineNumber) == 0) {
-        throw error;
-        return;
-    }
     if (Func.count(lineNumber)) {
         Func.erase(lineNumber);
     }
     Func[lineNumber] = stmt;
 }
 
-//void Program::removeSourceLine(int lineNumber) {
+// void Program::removeSourseLine(int lineNumber) {
 
 Statement *Program::getParsedStatement(int lineNumber) {
 //    Statement *s;
 //    setParsedStatement(lineNumber, s);
 //    return s;
-    if (Func.count(lineNumber) == 0) {
+    if (List.count(lineNumber) == 0) {
         return NULL;
     }
     return Func[lineNumber];
@@ -74,6 +76,11 @@ int Program::getFirstLineNumber() {
 }
 
 int Program::getNextLineNumber(int lineNumber) {
+    if (linejump != -2) {
+        int temp = linejump;
+        linejump = -2;
+        return temp;
+    }
     auto it = List.find(lineNumber);
     if (it != List.end()) {
         it++;
@@ -83,7 +90,33 @@ int Program::getNextLineNumber(int lineNumber) {
     return -1;
 }
 
-//more func to add
-//todo
+Statement *Program::ParseStatement(EvalState &state, TokenScanner &scanner) {
+    // REM LET PRINT INPUT END GOTO IF
+    std::string token = scanner.nextToken();
+    if (token == "REM") {
+        return new REM();
+    }
+    else if (token == "LET") {
+        Expression *exp = parseExp(scanner);
+        return new LET(*exp);
+    }
+    else if (token == "PRINT") {
+        Expression *exp = parseExp(scanner);
+        return new PRINT(state, *exp);
+    }
+    else if (token == "INPUT") {
+        token = scanner.nextToken();
+        return new INPUT(token);
+    }
+    else if (token == "END") {
+        return new END();
+    }
+    else if (token == "GOTO") {
+        token = scanner.nextToken();
+        int gt = stringToInteger(token);
+        return new GOTO(gt);
+    }
+    return NULL;
+}
 
 

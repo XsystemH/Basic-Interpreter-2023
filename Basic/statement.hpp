@@ -85,20 +85,17 @@ public:
  * specify its own destructor method to free that memory.
  */
 
-class REM : Statement {
-
-private:
-
-    std::string *note;
-    
+class REM : public Statement {
+  
 public:
 
-    REM(std::string &);
+    REM();
     ~REM();
     void execute(EvalState &, Program &);
+
 };
 
-class LET : Statement {
+class LET : public Statement {
     
 private:
 
@@ -112,7 +109,7 @@ public:
 
 };
 
-class PRINT : Statement {
+class PRINT : public Statement {
 
 private:
 
@@ -123,6 +120,59 @@ public:
 
     PRINT(EvalState &, Expression &);
     ~PRINT();
+    void execute(EvalState &, Program &);
+
+};
+
+class INPUT : public Statement {
+
+private:
+
+    std::string var;
+
+public:
+
+    INPUT(std::string &);
+    ~INPUT();
+    void execute(EvalState &, Program &);
+
+};
+
+class END : public Statement {
+
+public:
+
+    END();
+    ~END();
+    void execute(EvalState &, Program &);
+
+};
+
+class GOTO : public Statement {
+
+private:
+
+    int linenumber;
+
+public:
+
+    GOTO(int &);
+    ~GOTO();
+    void execute(EvalState &, Program &);
+
+};
+
+class IF : public Statement {
+
+private:
+
+    int linenumber;
+    Expression *exp;
+
+public:
+
+    IF(Expression *, int &);
+    ~IF();
     void execute(EvalState &, Program &);
 
 };

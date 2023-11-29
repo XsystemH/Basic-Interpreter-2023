@@ -14,6 +14,7 @@
 #include <set>
 #include <unordered_map>
 #include "Utils/tokenScanner.hpp"
+#include "evalstate.hpp"
 #include "exp.hpp"
 #include "statement.hpp"
 
@@ -157,7 +158,9 @@ public:
 
     int getNextLineNumber(int lineNumber);
 
-    Statement *ParseStatement(TokenScanner &scanner);
+    Statement *ParseStatement(EvalState &state, TokenScanner &scanner);
+
+    int linejump = -2;
 
 private:
 
@@ -165,6 +168,7 @@ private:
     //todo
     std::map<int, std::string> List;
     std::map<int, Statement*>  Func;
+    
 };
 
 #endif
