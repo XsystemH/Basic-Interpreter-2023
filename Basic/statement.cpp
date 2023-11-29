@@ -40,20 +40,29 @@ void LET::execute(EvalState &state, Program &program) {
 }
 
 PRINT::PRINT(EvalState &state, Expression &exp) {
-    try {
-        this->val = new int(exp.eval(state));
-    }catch (ErrorException &ex) {
-        std::cout << ex.getMessage() << "\n";
-        legal = false;
-        delete val;
-    }
+    // try {
+    //     this->val = new int(exp.eval(state));
+    // }catch (ErrorException &ex) {
+    //     std::cout << ex.getMessage() << "\n";
+    //     legal = false;
+    //     delete val;
+    // }
+    this->exp = &exp;
 }
 PRINT::~PRINT() {
     // int 要删吗？
-    delete val;
+    delete exp;
 }
 void PRINT::execute(EvalState &state, Program &program) {
-    if (legal) std::cout << *val << "\n";
+    legal = true;
+    int val;
+    try {
+        val = int(exp->eval(state));
+    }catch (ErrorException &ex) {
+        std::cout << ex.getMessage() << "\n";
+        legal = false;
+    }
+    if (legal) std::cout << val << "\n";
 }
 
 INPUT::INPUT(std::string &v) {
@@ -88,16 +97,63 @@ GOTO::GOTO(int &num) {
 }
 GOTO::~GOTO() = default;
 void GOTO::execute(EvalState &state, Program &program) {
-    program.linejump = linenumber;
+    if (program.LineNumberIsLegal(linenumber))
+        program.linejump = linenumber;
+    else {
+        std::cout << "LINE NUMBER ERROR\n";
+    }
 }
 
-IF::IF(Expression *e, int &n) {
-    this->exp = e;
+IF::IF(std::string str, int &n) {
+    this->str = str;
     this->linenumber = n;
+    // std::cout << "Store OK with: " << exp->toString() << std::endl;
 }
-IF::~IF() {
-    delete exp;
-}
+IF::~IF() = default;
 void IF::execute(EvalState &state, Program &program) {
+    bool flag = false;
+    char op = '=';
+    int i = 0;
+    for(; i < str.size(); i++) {
+        if (str[i] == '<') {
+            op = '<';
+            str[i] = '=';
+            break;
+        }
+        if (str[i] == '>') {
+            op = '>';
+            str[i] = '=';
+            break;
+        }
+    }
+    TokenScanner rawexp;
+    rawexp.ignoreWhitespace();
+    rawexp.scanNumbers();
+    rawexp.setInput(str);
+    Expression *exp = parseExp(rawexp);
+    // std::cout << "OP Get!" << std::endl;
+    Expression *lhs = ((CompoundExp *) exp)->getLHS();
+    Expression *rhs = ((CompoundExp *) exp)->getRHS();
+    // std::cout << "l&r Get!" << std::endl;
+    int lval = int(lhs->eval(state));
+    int rval = int(rhs->eval(state));
+    // std::cout << "Value Get!" << std::endl;
+    if (op == '=' && lval == rval) flag = true;
+    if (op == '>' && lval > rval) flag = true;
+    if (op == '<' && lval < rval) flag = true;
+    // if (op == ">=" && lval >= rval) flag = true; NO THIS OPERATOR
+    // if (op == "<=" && lval <= rval) flag = true;
+
+    if (flag) {
+        if (program.LineNumberIsLegal(linenumber))
+            program.linejump = linenumber;
+        else {
+            std::cout << "LINE NUMBER ERROR\n";
+        }
+    }
+    if (i < str.size()) str[i] = op;
+    delete exp;
+    // delete lhs;
+    // delete rhs;
     return;
 }

@@ -10,11 +10,13 @@
 
 #include "program.hpp"
 #include "Utils/strlib.hpp"
+#include "Utils/tokenScanner.hpp"
 #include "evalstate.hpp"
 #include "exp.hpp"
 #include "parser.hpp"
 #include "statement.hpp"
 #include <cstddef>
+#include <ostream>
 #include <string>
 #include <utility>
 
@@ -24,6 +26,10 @@ Program::~Program() = default;
 
 void Program::clear() {
     List.clear();
+    for (auto it = Func.begin(); it != Func.end(); it++) {
+        // it->second->~Statement();
+        delete it->second;
+    }
     Func.clear();
 }
 
@@ -39,7 +45,11 @@ void Program::addSourceLine(int lineNumber, const std::string &line) {
 
 void Program::removeSourceLine(int lineNumber) {
     List.erase(lineNumber);
-    Func.erase(lineNumber);
+    // if (Func.count(lineNumber)) {
+    //     Func[lineNumber]->~Statement();
+    //     delete Func[lineNumber];
+    //     Func.erase(lineNumber);
+    // }
 }
 
 std::string Program::getSourceLine(int lineNumber) {
@@ -50,9 +60,6 @@ std::string Program::getSourceLine(int lineNumber) {
 }
 
 void Program::setParsedStatement(int lineNumber, Statement *stmt) {
-    if (Func.count(lineNumber)) {
-        Func.erase(lineNumber);
-    }
     Func[lineNumber] = stmt;
 }
 
@@ -66,6 +73,14 @@ Statement *Program::getParsedStatement(int lineNumber) {
         return NULL;
     }
     return Func[lineNumber];
+}
+
+void Program::removeParsedStatement(int lineNumber) {
+    if (Func.count(lineNumber)) {
+        // Func[lineNumber]->~Statement();
+        delete Func[lineNumber];
+        Func.erase(lineNumber);
+    }
 }
 
 int Program::getFirstLineNumber() {
@@ -90,7 +105,14 @@ int Program::getNextLineNumber(int lineNumber) {
     return -1;
 }
 
-Statement *Program::ParseStatement(EvalState &state, TokenScanner &scanner) {
+bool Program::LineNumberIsLegal(int lineNumber) {
+    if (Func.count(lineNumber)) {
+        return true;
+    }
+    return false;
+}
+
+Statement *Program::ParseStatement(EvalState &state, TokenScanner &scanner, std::string line) {
     // REM LET PRINT INPUT END GOTO IF
     std::string token = scanner.nextToken();
     if (token == "REM") {
@@ -115,6 +137,16 @@ Statement *Program::ParseStatement(EvalState &state, TokenScanner &scanner) {
         token = scanner.nextToken();
         int gt = stringToInteger(token);
         return new GOTO(gt);
+    }
+    else if (token == "IF") {
+        int pos1 = scanner.getPosition();
+        while (token != "THEN") token = scanner.nextToken();
+        int pos2 = scanner.getPosition();
+        // std::cout << pos1 << " " << pos2 << std::endl;
+        std::string str = line.substr(pos1, pos2 - pos1 - 5);
+        // std::cout << "EXP get!" << std::endl;
+        int linenum = stringToInteger(scanner.nextToken());
+        return new IF(str, linenum);
     }
     return NULL;
 }

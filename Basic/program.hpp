@@ -137,6 +137,8 @@ public:
 
     Statement *getParsedStatement(int lineNumber);
 
+    void removeParsedStatement(int lineNumber);
+
 /*
  * Method: getFirstLineNumber
  * Usage: int lineNumber = program.getFirstLineNumber();
@@ -158,7 +160,9 @@ public:
 
     int getNextLineNumber(int lineNumber);
 
-    Statement *ParseStatement(EvalState &state, TokenScanner &scanner);
+    bool LineNumberIsLegal(int lineNumber);
+
+    Statement *ParseStatement(EvalState &state, TokenScanner &scanner, std::string line);
 
     int linejump = -2;
 

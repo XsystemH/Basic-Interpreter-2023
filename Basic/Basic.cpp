@@ -173,14 +173,21 @@ void processLine(std::string line, Program &program, EvalState &state) {
     if (scanner.getTokenType(token) == NUMBER) {
         int linenumber = stringToInteger(token);
         if (scanner.hasMoreTokens()) {
-            int pos = scanner.getPosition();
+            int pos = abs(scanner.getPosition()); // trace 75: "15 END" pos = -4 ?
             // // 删去行号，将后面的语句交给储存部分
+            // std::cout << pos << "\n";
             program.addSourceLine(linenumber, line.substr(pos));
-            Statement *temp = program.ParseStatement(state, scanner);
+            // std::cout << "Add S OK" << std::endl;
+            program.removeParsedStatement(linenumber);
+            // std::cout << "Remove OK" << std::endl;
+            Statement *temp = program.ParseStatement(state, scanner, line);
+            // std::cout << "Get State OK" << std::endl;
             program.setParsedStatement(linenumber, temp);
+            // std::cout << "Set OK" << std::endl;
         }
         else {
             program.removeSourceLine(linenumber);
+            program.removeParsedStatement(linenumber);
         }
     }
     else if (scanner.getTokenType(token) == WORD) { 
@@ -196,7 +203,7 @@ void processLine(std::string line, Program &program, EvalState &state) {
             Expression *exp = parseExp(scanner);
             PRINT temp(state, *exp);
             temp.execute(state, program);
-            delete exp;
+            // delete exp;
         }
         else if (token == "INPUT") {
             std::string var = scanner.nextToken();
@@ -239,6 +246,8 @@ void processLine(std::string line, Program &program, EvalState &state) {
             state.Clear();
         }
         else if (token == "QUIT") {
+            program.clear();
+            state.Clear();
             exit(0);
         }
         else if (token == "HELP") {

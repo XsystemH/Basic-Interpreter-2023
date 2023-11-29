@@ -113,7 +113,7 @@ class PRINT : public Statement {
 
 private:
 
-    int *val = nullptr;
+    Expression *exp = nullptr;
     bool legal = true;
 
 public:
@@ -165,13 +165,13 @@ public:
 class IF : public Statement {
 
 private:
-
+    
+    std::string str;
     int linenumber;
-    Expression *exp;
 
 public:
 
-    IF(Expression *, int &);
+    IF(std::string , int &);
     ~IF();
     void execute(EvalState &, Program &);
 
