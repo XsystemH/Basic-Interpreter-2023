@@ -8,14 +8,32 @@
 #ifndef _program_h
 #define _program_h
 
+#include <map>
 #include <string>
 #include <vector>
 #include <set>
 #include <unordered_map>
-// #include "statement.hpp"
+#include "Utils/tokenScanner.hpp"
+#include "evalstate.hpp"
+#include "exp.hpp"
+#include "statement.hpp"
 
 
 class Statement;
+
+// enum functions {REM, LET, PRINT, INPUT, END, GOTO, IF} ;
+// WRONG!!!!!!
+
+/*struct code {
+    int linenumber;
+    std::string origin;
+    int function;
+    std::string ver1, ver2;
+    Expression *exp1 = nullptr, *exp2 = nullptr;
+    std::string str;
+    std::string rem;
+};*/ 
+// I shouldn't do that (@_@)
 
 /*
  * This class stores the lines in a BASIC program.  Each line
@@ -140,13 +158,17 @@ public:
 
     int getNextLineNumber(int lineNumber);
 
-    //more func to add
-    //todo
+    Statement *ParseStatement(EvalState &state, TokenScanner &scanner);
+
+    int linejump = -2;
 
 private:
 
     // Fill this in with whatever types and instance variables you need
     //todo
+    std::map<int, std::string> List;
+    std::map<int, Statement*>  Func;
+    
 };
 
 #endif

@@ -85,4 +85,96 @@ public:
  * specify its own destructor method to free that memory.
  */
 
+class REM : public Statement {
+  
+public:
+
+    REM();
+    ~REM();
+    void execute(EvalState &, Program &);
+
+};
+
+class LET : public Statement {
+    
+private:
+
+    Expression *exp = nullptr;
+
+public:
+
+    LET(Expression &);
+    ~LET();
+    void execute(EvalState &, Program &);
+
+};
+
+class PRINT : public Statement {
+
+private:
+
+    int *val = nullptr;
+    bool legal = true;
+
+public:
+
+    PRINT(EvalState &, Expression &);
+    ~PRINT();
+    void execute(EvalState &, Program &);
+
+};
+
+class INPUT : public Statement {
+
+private:
+
+    std::string var;
+
+public:
+
+    INPUT(std::string &);
+    ~INPUT();
+    void execute(EvalState &, Program &);
+
+};
+
+class END : public Statement {
+
+public:
+
+    END();
+    ~END();
+    void execute(EvalState &, Program &);
+
+};
+
+class GOTO : public Statement {
+
+private:
+
+    int linenumber;
+
+public:
+
+    GOTO(int &);
+    ~GOTO();
+    void execute(EvalState &, Program &);
+
+};
+
+class IF : public Statement {
+
+private:
+
+    int linenumber;
+    Expression *exp;
+
+public:
+
+    IF(Expression *, int &);
+    ~IF();
+    void execute(EvalState &, Program &);
+
+};
+
 #endif
